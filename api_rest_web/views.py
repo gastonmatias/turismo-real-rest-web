@@ -196,3 +196,28 @@ def execute_proc(proced_almac,params=None):
     #    c.execute(query, params or [])
     #    names = [col[0].lower() for col in c.description]
     #    return [dict(list(zip(names, values))) for values in c.fetchall()]    
+
+class GetService(View):
+    # Funcion Para obtener los servicios extras
+    def get(self, request,id=0):        
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_cursor = django_cursor.connection.cursor()
+        cursor.callproc('GET_SERVICE',[out_cursor])
+        services = []
+        
+        for i in out_cursor:
+            service_json= {
+                "id": i[0],
+                "name": i[1],
+                "price": i[2],
+                "location": i[3],
+                "avalible": i[4],
+                "service_type_id": i[5]
+            }
+            services.append(service_json)
+        
+        return JsonResponse({
+            'message': 'success',
+            'services': services
+        })

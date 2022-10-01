@@ -13,6 +13,7 @@ urlpatterns = [
     path('deptos/', DeptoView.as_view(), name='depto_list'),
     path('deptos/<int:id>', DeptoView.as_view(), name='depto_process'),
     #path('add_reservation/', AddReservation.as_view(), name='reservation_process'),
-    path('reserve/', addReservation, name='reserve_process'),
+    path('reserve/', addReservation, name='reserve_process'),    
+    path('getService/', GetService.as_view(), name='getService'),
     path('', getRoutes)
 ]
