@@ -8,6 +8,8 @@ from rest_framework import generics, status
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views import View
+from datetime import date
+import datetime
 import base64
 import cx_Oracle
 
@@ -220,4 +222,58 @@ class GetService(View):
         return JsonResponse({
             'message': 'success',
             'services': services
+        })
+
+class GetFechasNoDisponibles(View):
+    def get(self, request,id=0):        
+
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_cursor = django_cursor.connection.cursor()
+        out_cursor2 = django_cursor.connection.cursor()
+        cursor.callproc('GET_RESERVATION',[out_cursor, id])
+        reservation = {}        
+        
+        for i in out_cursor:
+            if i == None:
+                continue
+            reservation.update({i[0].date(): i[1].date()})
+        
+        cursor.callproc('GET_DEPARTMENT_DISPONIBILITY',[out_cursor2, id])
+        disponibility = {}
+        for i in out_cursor2:
+            if i == None:
+                continue
+            disponibility.update({i[0].date(): i[1].date()})
+
+        fechasNoDisponibles = []
+
+        reservation_items = reservation.items()
+        for key, value in reservation_items:
+            dia = key
+            #solo añade las fechas desde hoy
+            if dia >= date.today():
+                fechasNoDisponibles.append(dia)
+            #voy añadiendo los días desde el checkin uno por uno hasta el checkout, y luego continúa con la siguiente reserva si existe
+            while dia < value:
+                dia = dia + datetime.timedelta(days=1)
+                if dia >= date.today():
+                    fechasNoDisponibles.append(dia)
+                
+
+        disponibility_items = disponibility.items()
+        for key, value in disponibility_items:
+            dia = key
+            if dia >= date.today():
+                fechasNoDisponibles.append(dia)
+            while dia < value:
+                dia = dia + datetime.timedelta(days=1)
+                if dia >= date.today():
+                    fechasNoDisponibles.append(dia)
+
+        fechasNoDisponibles.sort()
+        #print (fechasNoDisponibles)
+        return JsonResponse({
+            'message': 'success',
+            'fechasNoDisponibles': fechasNoDisponibles
         })
