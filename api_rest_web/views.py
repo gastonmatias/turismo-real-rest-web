@@ -84,7 +84,8 @@ class DeptoView(View):
                     "price": i[5],
                     "department_image": i[6] if i[6] == None else str(base64.b64encode(i[6].read()), 'utf-8'),
                     "region": i[7],
-                    "commune": i[8]
+                    "commune": i[8],
+                    "department_type": i[9]
                 }
                 departments.append(department_json)
         
@@ -112,7 +113,8 @@ class DeptoView(View):
                     "price": i[5],
                     "department_image": i[6] if i[6] == None else str(base64.b64encode(i[6].read()), 'utf-8'),
                     "region": i[7],
-                    "commune": i[8]
+                    "commune": i[8],
+                    "department_type": i[9]
                 }
                 departments.append(department_json)
             
