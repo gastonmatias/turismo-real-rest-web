@@ -125,21 +125,27 @@ class DeptoView(View):
 
 # ! INIT ADD Reservation
 def addReservation(request):   
+        total_amount = request.POST.get('total_amount')
+        reservation_amount = request.POST.get('reservation_amount')
+        qty_customers = request.POST.get('qty_customers')
         check_in = request.POST.get('check_in')
         check_out = request.POST.get('check_out')
-        qty_customers = request.POST.get('qty_customers')
-        reservation_amount = request.POST.get('reservation_amount')
-        total_amount = request.POST.get('total_amount')
         user_id = request.POST.get('user_id')
         department_id = request.POST.get('department_id')
         django_cursor = connection.cursor()
         cursor = django_cursor.connection.cursor()
         salida = cursor.var(cx_Oracle.NUMBER)
-        cursor.callproc('ADD_RESERVATION',[check_in,check_out,qty_customers,reservation_amount,total_amount,user_id,department_id,salida])
+        cursor.callproc('ADD_RESERVATION',[total_amount,reservation_amount,qty_customers,check_in,check_out,user_id,department_id,salida])
         
         id_reservation = salida.getvalue() #id obtenido
 
-        services_selected = [6,7,8,9]
+        print('---------------------------------------------')
+        print('---------------------------------------------')
+        print(f'------ id_reservation: {id_reservation} ----------')
+        print('-------------------------------------------')
+        print('---------------------------------------------')
+
+        services_selected = [3,21]
 
         reserv_detail_records = []
 
