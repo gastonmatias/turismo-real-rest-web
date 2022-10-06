@@ -12,6 +12,7 @@ from datetime import date
 import datetime
 import base64
 import cx_Oracle
+import json
 
 from  django.db import connection
 from django.forms import model_to_dict
@@ -125,27 +126,32 @@ class DeptoView(View):
 
 # ! INIT ADD Reservation
 def addReservation(request):   
-        total_amount = request.POST.get('total_amount')
-        reservation_amount = request.POST.get('reservation_amount')
-        qty_customers = request.POST.get('qty_customers')
-        check_in = request.POST.get('check_in')
-        check_out = request.POST.get('check_out')
-        user_id = request.POST.get('user_id')
-        department_id = request.POST.get('department_id')
+        data = json.loads(request.body.decode('utf-8'))
+        
+        print('-----------------')
+        print('-----------------')
+        print(data)
+        print('-----------------')
+        print('-----------------')
+
         django_cursor = connection.cursor()
         cursor = django_cursor.connection.cursor()
         salida = cursor.var(cx_Oracle.NUMBER)
-        cursor.callproc('ADD_RESERVATION',[total_amount,reservation_amount,qty_customers,check_in,check_out,user_id,department_id,salida])
+        cursor.callproc('ADD_RESERVATION',[
+        data['total_amount'],
+        data['reservation_amount'],
+        data['qty_customers'],
+        data['check_in'],
+        data['check_out'],
+        data['user_id'],
+        data['department_id'],
+        salida
+        ])
+        
         
         id_reservation = salida.getvalue() #id obtenido
 
-        print('---------------------------------------------')
-        print('---------------------------------------------')
-        print(f'------ id_reservation: {id_reservation} ----------')
-        print('-------------------------------------------')
-        print('---------------------------------------------')
-
-        services_selected = [3,21]
+        services_selected = data['selectedServices']
 
         reserv_detail_records = []
 
@@ -161,26 +167,6 @@ def addReservation(request):
         return JsonResponse(json_salida, safe= False)
 
 
-#class AddReservation(View):
-#    def post(self,request):    
-#        check_in = request.POST.get('check_in')
-#        check_out = request.POST.get('check_out')
-#        qty_customers = request.POST.get('qty_customers')
-#        reservation_amount = request.POST.get('reservation_amount')
-#        total_amount = request.POST.get('total_amount')
-#        user_id = request.POST.get('user_id')
-#        department_id = request.POST.get('department_id')
-#        django_cursor = connection.cursor()
-#        cursor = django_cursor.connection.cursor()
-#        salida = cursor.var(cx_Oracle.NUMBER)
-#        cursor.callproc('ADD_RESERVATION',[check_in,check_out,qty_customers,reservation_amount,total_amount,user_id,department_id,salida])
-#        
-#        response = salida.getvalue()
-#        
-#        return JsonResponse(response, safe= False)
-
-# funcion helper para ejecutar consultas a la bd,
-# ademas rescata columnas de la consulta y las implementa como "clave" en el json a retornar
 def execute_to_dict(query, params=None):
     with connection.cursor() as c:
         c.execute(query, params or [])
