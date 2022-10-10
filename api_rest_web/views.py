@@ -271,3 +271,32 @@ class GetFechasNoDisponibles(View):
             'message': 'success',
             'fechasNoDisponibles': fechasNoDisponibles
         })
+
+class GetReservas(View):
+    # Funcion Para obtener las reservas por usuario
+    def get(self, request,id=0):        
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_cursor = django_cursor.connection.cursor()
+        cursor.callproc('GET_RESERVAS',[out_cursor, id])
+        reservas = []
+        
+        for i in out_cursor:
+            service_json= {
+                "id": i[0],
+                "total_amount": i[1],
+                "reservation_amount": i[2],
+                "qty_customers": i[3],
+                "check_in": i[4],
+                "check_out": i[5],
+                "status": i[6],
+                "user_id": i[7],
+                "department_id": i[8],
+                "qty_rooms": i[9]
+            }
+            reservas.append(service_json)
+        
+        return JsonResponse({
+            'message': 'success',
+            'services': reservas
+        })

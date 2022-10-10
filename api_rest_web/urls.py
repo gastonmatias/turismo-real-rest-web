@@ -16,5 +16,6 @@ urlpatterns = [
     path('reserve/', addReservation, name='reserve_process'),    
     path('servicios_extra/', GetService.as_view(), name='getService'),
     path('disponibilidad_depto/<int:id>', GetFechasNoDisponibles.as_view(), name='getFechasNoDisponibles'),
+    path('reservas/<int:id>', GetReservas.as_view(), name='getReservas'),
     path('', getRoutes)
 ]
