@@ -278,6 +278,7 @@ class GetReservas(View):
         django_cursor = connection.cursor()
         cursor = django_cursor.connection.cursor()
         out_cursor = django_cursor.connection.cursor()
+        out_cursor2 = django_cursor.connection.cursor()
         cursor.callproc('GET_RESERVAS',[out_cursor, id])
         reservas = []
         
@@ -287,12 +288,14 @@ class GetReservas(View):
                 "total_amount": i[1],
                 "reservation_amount": i[2],
                 "qty_customers": i[3],
-                "check_in": i[4],
-                "check_out": i[5],
+                "check_in": i[4].date(),
+                "check_out": i[5].date(),
                 "status": i[6],
                 "user_id": i[7],
                 "department_id": i[8],
-                "qty_rooms": i[9]
+                "qty_rooms": i[9],
+                "commune": i[10],
+                "region": i[11]
             }
             reservas.append(service_json)
         
