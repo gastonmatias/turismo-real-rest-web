@@ -303,3 +303,17 @@ class GetReservas(View):
             'message': 'success',
             'services': reservas
         })
+
+class CancelarReserva(View):
+    # Funcion Para obtener las reservas por usuario
+    def get(self, request,id=0):        
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_number = cursor.var(cx_Oracle.NUMBER)
+        cursor.callproc('CANCELAR_RESERVA',[id, out_number])
+                
+        return JsonResponse({
+            'message': 'success',
+            'services': int(out_number.getvalue())
+        })
+        
