@@ -5,5 +5,3 @@ __pycache__/
 venv_tr/
 
 migrations/
-
-turismo_real_rest/settings.py

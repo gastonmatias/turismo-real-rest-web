@@ -301,12 +301,12 @@ class GetReservas(View):
         
         return JsonResponse({
             'message': 'success',
-            'services': reservas
+            'reservas': reservas
         })
 
 class CancelarReserva(View):
     # Funcion Para obtener las reservas por usuario
-    def get(self, request,id=0):        
+    def put(self, request,id=0):        
         django_cursor = connection.cursor()
         cursor = django_cursor.connection.cursor()
         out_number = cursor.var(cx_Oracle.NUMBER)
@@ -314,6 +314,6 @@ class CancelarReserva(View):
                 
         return JsonResponse({
             'message': 'success',
-            'services': int(out_number.getvalue())
+            'canceled_reservation': int(out_number.getvalue())
         })
         
