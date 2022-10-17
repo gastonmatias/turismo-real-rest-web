@@ -284,18 +284,19 @@ class GetReservas(View):
         
         for i in out_cursor:
             service_json= {
-                "id": i[0],
-                "total_amount": i[1],
+                "id":                 i[0],
+                "total_amount":       i[1],
                 "reservation_amount": i[2],
-                "qty_customers": i[3],
-                "check_in": i[4].date(),
-                "check_out": i[5].date(),
-                "status": i[6],
-                "user_id": i[7],
-                "department_id": i[8],
-                "qty_rooms": i[9],
-                "commune": i[10],
-                "region": i[11]
+                "qty_customers":      i[3],
+                "check_in":           i[4].date(),
+                "check_out":          i[5].date(),
+                "status":             i[6],
+                "user_id":            i[7],
+                "department_id":      i[8],
+                "reservation_date":   i[9],
+                "qty_rooms":          i[10],
+                "commune":            i[11],
+                "region":             i[12]
             }
             reservas.append(service_json)
         
