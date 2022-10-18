@@ -305,6 +305,26 @@ class GetReservas(View):
             'reservas': reservas
         })
 
+class getServicesByReservation(View):
+    def get(self,request,id=0):        
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_cursor = django_cursor.connection.cursor()
+        cursor.callproc('GET_SERVICES_BY_ID_RESERVA',[out_cursor, id])
+        servicesById = []
+        
+        for i in out_cursor:
+            service_json= {
+                "servicio_extra": i[0],
+                "id_reservation": i[1]
+            }
+            servicesById.append(service_json)
+        
+        return JsonResponse({
+            'message': 'success',
+            'services': servicesById
+        })
+
 class CancelarReserva(View):
     # Funcion Para obtener las reservas por usuario
     def put(self, request,id=0):        
@@ -316,5 +336,21 @@ class CancelarReserva(View):
         return JsonResponse({
             'message': 'success',
             'canceled_reservation': int(out_number.getvalue())
+        })
+
+class EditarReserva(View):
+    # Funcion Para obtener las reservas por usuario
+    def put(self, request,id): 
+        data = json.loads(request.body.decode('utf-8'))       
+        
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        out_number = cursor.var(cx_Oracle.NUMBER)
+        # cursor.callproc('EDIT_RESERVATION',[data['id'],data['qty_customers'], out_number])
+        cursor.callproc('EDIT_RESERVATION',[id,data['qty_customers'], out_number])
+                
+        return JsonResponse({
+            'message': 'success',
+            'id_reservation_edited': int(out_number.getvalue())
         })
         
