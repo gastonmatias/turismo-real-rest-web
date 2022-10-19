@@ -354,3 +354,18 @@ class EditarReserva(View):
             'id_reservation_edited': int(out_number.getvalue())
         })
         
+class AddTransactionView(View):
+    def post(self,request):
+        django_cursor = connection.cursor()
+        cursor = django_cursor.connection.cursor()
+        json_decode = request.body.decode('utf-8')
+        post_data = json.loads(json_decode)
+        out_number = cursor.var(cx_Oracle.NUMBER)
+        print(post_data)
+        cursor.callproc('ADD_TRANSACTION',[post_data['reservation_id'], post_data['amount'],post_data['status'],post_data['transaction_type'],out_number])
+        connection.commit()
+        id_transaction = out_number.getvalue()
+        return JsonResponse({
+            "response":id_transaction
+        }) ###{"qty":2, "department_id": 66, "product_id":21}###
+        
