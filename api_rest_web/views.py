@@ -366,6 +366,7 @@ class AddTransactionView(View):
         connection.commit()
         id_transaction = out_number.getvalue()
         return JsonResponse({
-            "response":id_transaction
+            'message': 'success',
+            "id_transaction":id_transaction
         }) ###{"qty":2, "department_id": 66, "product_id":21}###
         
