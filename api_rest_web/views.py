@@ -151,17 +151,28 @@ def addReservation(request):
         
         id_reservation = salida.getvalue() #id obtenido
 
+        #  add reservation details
         services_selected = data['selectedServices']
-
         reserv_detail_records = []
 
         for i in services_selected:
             cursor.callproc('ADD_RESERVATION_DETAILS',[i,id_reservation,salida])
             reserv_detail_records.append(salida.getvalue())
+        
+        #  add service info
+        services_info = data['servicesInfo']
+
+        reserv_info_records = []
+        print(len(services_info))
+        if len(services_info) > 0 :
+            for i in services_info:
+                cursor.callproc('ADD_RESERVATION_SERVICE_INFO',[i["id"],i["hora"],id_reservation,salida])
+                reserv_info_records.append(salida.getvalue())
 
         json_salida = {
             "id_reservation":id_reservation,
-            "services": reserv_detail_records
+            "services": reserv_detail_records,
+            "reserv_info_records": reserv_info_records
         }
 
         return JsonResponse(json_salida, safe= False)
