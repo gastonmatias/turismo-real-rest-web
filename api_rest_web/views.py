@@ -327,7 +327,8 @@ class getServicesByReservation(View):
         for i in out_cursor:
             service_json= {
                 "servicio_extra": i[0],
-                "id_reservation": i[1]
+                "id_reservation": i[1],
+                "hora": i[2],
             }
             servicesById.append(service_json)
         
